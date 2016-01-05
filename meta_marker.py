@@ -114,24 +114,26 @@ if __name__ == '__main__':
 	contigs = {}
 	for line in lines:
 		contig = '_'.join(line.split("\t")[0].split("_")[:-1])
-		species = line.split("\t")[1].split("[")[1].split("]")[0]
+		genus = line.split("\t")[1].split("[")[1].split("]")[0].replace("Candidatus","").lstrip().strip().split()[0]
 		if contig not in contigs.keys():
-			contigs[contig] = [species]
+			contigs[contig] = [genus]
 		else:
-			contigs[contig].append(species)
+			contigs[contig].append(genus)
 
 	names = {}
 	for contig in contigs:
 		count = Counter(contigs[contig])
-		names[contig] = str(count.most_common(1)[0][0]) + " (" + str(count.most_common(1)[0][1]) + ")"
+		names[contig] = str(count.most_common(1)[0][0])
 
 	#Calculate tetranucleotide frequencies for all marked contigs
 	print "Calculating tetranucleotide frequencies for marker contigs..."
 	tetramers = {}
+	sizes = {}
 	input_handle = open(input_file, "rU")
 	for record in SeqIO.parse(input_handle, "fasta") :
 		if record.id in names and len(record.seq) >= min_size:
 			tetramers[record.id] = calc_tetra(record)
+			sizes[record.id] = len(record.seq)
 
 	#Run PCA on that
 	print "Using Scikitlearn to run PCA on 4mer distances..."
@@ -149,6 +151,12 @@ if __name__ == '__main__':
 
 	#Create graph with matplotlib
 
+	#normalize sizes on scale from 20 - 200
+	for contig in sizes:
+		sizes[contig] = float(sizes[contig]) / float(max(sizes.values())) * 200 + 25
+	sizes_list = []
+	for contig in sorted(sizes.keys()):
+		sizes_list.append(sizes[contig])
 	#color contig points by blast assignments
 	print "Plotting PCA graph of marker contigs"
 	color_assigned = {}
@@ -162,5 +170,5 @@ if __name__ == '__main__':
 			color_list.append(col)
 
 	colors = np.random.rand(len(fit[:,0]))
-	plt.scatter(fit[:,0], fit[:,1], s=100, c=color_list, alpha=0.5)
+	plt.scatter(fit[:,0], fit[:,1], s=sizes_list, c=color_list, alpha=0.5)
 	plt.show()
