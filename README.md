@@ -1,7 +1,7 @@
 # MetaMarkers
 Super fast microbial taxonomic profiling and visualization of metagenome assemblies.
 
-This software was created for initial exploratory analysis of the prokaryotic taxa in a metagenomic assembly. It translates DNA naively in all 6 reading frames, searches using HMMER for 11 highly conserved marker ribosomal proteins, finds the closest known references to those proteins, and plots a tetranucleotide frequency PCA for the labeled contigs containing marker proteins. The results should allow you to quickly identify key species and contigs for genome binning of microbial genomes.
+This script was created for initial exploratory analysis of the prokaryotic taxa in a metagenomic assembly. It translates DNA naively in all 6 reading frames, searches using HMMER for 11 highly conserved marker ribosomal proteins, finds the closest known references to those proteins, and plots a tetranucleotide frequency PCA for the labeled contigs containing marker proteins. The results should allow you to quickly identify key species and contigs for genome binning of microbial genomes.
 
 Most importantly, run time on full assemblies is generally less than **5 minutes** on a personal computer. 
 
